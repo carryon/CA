@@ -1,0 +1,19 @@
+id: "123"
+
+ca_server: "http://127.0.0.1:8081"
+
+deploy_server: "http://127.0.0.1:8080"
+
+base_dir: "/data/agent/"
+
+agent_cert_dir: "/data/agent/agent_cert/"
+
+l0_exec_file: "/data/agent/lcnd"
+
+msgnet_config_dir: "/data/agent/msgnet_config/"
+
+msgnet_exec_file: "/data/agent/msg-net"
+
+msgnet_url: "http://ca.bocheninc.com/msg-net"
+
+lcnd_url: "http://ca.bocheninc.com/lcnd"
