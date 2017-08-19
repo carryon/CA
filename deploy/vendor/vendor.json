@@ -1,0 +1,91 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "yL7+xJ/LiY7OiN4vO3/R458/6qo=",
+			"path": "github.com/Sirupsen/logrus",
+			"revision": "f006c2ac4710855cf0f916dd6b77acf6b048dc6e",
+			"revisionTime": "2017-08-15T20:20:55Z"
+		},
+		{
+			"checksumSHA1": "YZ5X/42CtshnFkI6uXjll/XU364=",
+			"path": "github.com/bocheninc/msg-net/config",
+			"revision": "56dfcd4ca69bcaf2f04dd3d14c42386921d0dc55",
+			"revisionTime": "2017-06-15T20:59:37Z"
+		},
+		{
+			"checksumSHA1": "xf5ymvlm3Wnt/koMB9yg7jVHZmY=",
+			"path": "github.com/bocheninc/msg-net/logger",
+			"revision": "56dfcd4ca69bcaf2f04dd3d14c42386921d0dc55",
+			"revisionTime": "2017-06-15T20:59:37Z"
+		},
+		{
+			"checksumSHA1": "34H0Q5+mOa0O9fepNONf7ThL4uE=",
+			"path": "github.com/bocheninc/msg-net/peer",
+			"revision": "56dfcd4ca69bcaf2f04dd3d14c42386921d0dc55",
+			"revisionTime": "2017-06-15T20:59:37Z"
+		},
+		{
+			"checksumSHA1": "ELv9livY0oLK7n7J/f9pj/AVSZw=",
+			"path": "github.com/bocheninc/msg-net/protos",
+			"revision": "56dfcd4ca69bcaf2f04dd3d14c42386921d0dc55",
+			"revisionTime": "2017-06-15T20:59:37Z"
+		},
+		{
+			"checksumSHA1": "mbWMeKyXZvC2Z+j/bay9ClYw4xs=",
+			"path": "github.com/bocheninc/msg-net/router",
+			"revision": "56dfcd4ca69bcaf2f04dd3d14c42386921d0dc55",
+			"revisionTime": "2017-06-15T20:59:37Z"
+		},
+		{
+			"checksumSHA1": "uKWV6+UBcKdkOXyyIVItkxY+4WU=",
+			"path": "github.com/bocheninc/msg-net/util",
+			"revision": "56dfcd4ca69bcaf2f04dd3d14c42386921d0dc55",
+			"revisionTime": "2017-06-15T20:59:37Z"
+		},
+		{
+			"checksumSHA1": "uchokM/F2N3uidsDryuqft1It4c=",
+			"path": "github.com/gin-gonic/gin",
+			"revision": "8f861946b028a0b5ed4acf8df4b673e23e8c5634",
+			"revisionTime": "2017-07-17T10:57:59Z"
+		},
+		{
+			"checksumSHA1": "sHHM9wZZEdyf3FqD+3i3NHxQz/U=",
+			"path": "github.com/go-sql-driver/mysql",
+			"revision": "37b91d8876474f11b8e419f2fa65b15824ab9b9c",
+			"revisionTime": "2017-08-18T04:13:38Z"
+		},
+		{
+			"checksumSHA1": "9if9IBLsxkarJ804NPWAzgskIAk=",
+			"path": "github.com/manucorporat/stats",
+			"revision": "8f2d6ace262eba462e9beb552382c98be51d807b",
+			"revisionTime": "2015-05-31T20:46:25Z"
+		},
+		{
+			"checksumSHA1": "lU+gVOtSFnBKx11uhPL8b9v0uTE=",
+			"path": "github.com/spf13/cobra",
+			"revision": "7be4beda01ec05d0b93d80b3facd2b6f44080d94",
+			"revisionTime": "2017-03-14T17:12:53Z"
+		},
+		{
+			"checksumSHA1": "cNe3MKwsFLDRzRjKEtOduUiG344=",
+			"path": "github.com/spf13/viper",
+			"revision": "7538d73b4eb9511d85a9f1dfef202eeb8ac260f4",
+			"revisionTime": "2017-02-17T16:38:17Z"
+		},
+		{
+			"checksumSHA1": "4Gv9Nedw2ry8zStFsAuMqD24Bio=",
+			"path": "github.com/spf13/viper/remote",
+			"revision": "7538d73b4eb9511d85a9f1dfef202eeb8ac260f4",
+			"revisionTime": "2017-02-17T16:38:17Z"
+		},
+		{
+			"checksumSHA1": "0KwOlQV1dNUh9X8t+5s7nX5bqfk=",
+			"path": "gopkg.in/yaml.v2",
+			"revision": "a3f3340b5840cee44f372bddb5880fcbc419b46a",
+			"revisionTime": "2017-02-08T14:18:51Z"
+		}
+	],
+	"rootPath": "github.com/bocheninc/CA/deploy"
+}
