@@ -13,3 +13,5 @@ type Request struct {
 	Params *json.RawMessage `json:"params"`
 	ID     uint             `json:"id"`
 }
+
+func 
