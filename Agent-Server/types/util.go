@@ -1,6 +1,6 @@
-package http
+package types
 
-type VersionAPI struct {
+type Version struct {
 	ID     int `json:"id"`
 	Result struct {
 		Version string `json:"version"`
@@ -8,13 +8,13 @@ type VersionAPI struct {
 	Error interface{} `json:"error"`
 }
 
-type DownloadAPI struct {
+type Download struct {
 	ID     int         `json:"id"`
 	Result interface{} `json:"result"`
 	Error  interface{} `json:"error"`
 }
 
-type TimestampAPI struct {
+type Timestamp struct {
 	Result []struct {
 		NodeID     string `json:"node_id"`
 		UpdateTime int    `json:"update_time"`

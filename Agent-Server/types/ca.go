@@ -1,16 +1,16 @@
 package types
 
+type CAConfig struct {
+	CA struct {
+		Enabled bool `yaml:"enabled"`
+	}
+}
+
 type CertConfig struct {
 	Cert struct {
 		KeyPath string `yaml:"keyPath"`
 		CrtPath string `yaml:"crtPath"`
 		CaPath  string `yaml:"caPath"`
-	}
-}
-
-type CAConfig struct {
-	CA struct {
-		Enabled bool `yaml:"enabled"`
 	}
 }
 
