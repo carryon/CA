@@ -34,10 +34,7 @@ func nodesConfig(params interface{}, list *List) (interface{}, error) {
 		b := body.(map[interface{}]interface{})
 
 		b[interface{}("node_id")] = interface{}(v.NodeID)
-
-		//todo defult update-time
-		b[interface{}("update_time")] = interface{}(int64(123456))
-		//b[interface{}("update_time")] = interface{}(v.Updated.Unix())
+		b[interface{}("update_time")] = interface{}(v.Updated.Unix())
 
 		body = convert(b)
 		r, err := json.Marshal(body)
@@ -46,7 +43,7 @@ func nodesConfig(params interface{}, list *List) (interface{}, error) {
 		}
 		result = append(result, string(r))
 	}
-	log.Debug("nodesConfig result : %v", result)
+	log.Debug("nodes Config result : %v", result, len(nodes))
 	return result, nil
 }
 

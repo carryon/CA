@@ -8,8 +8,8 @@ log:
 
 #db mysql
 db:
-  name: "l0_db"
+  name: "db_l0"
   user: "root"
-  password: "root"
-  host: "127.0.0.1"
+  password: "123456"
+  host: "192.168.9.14"
   port: "3306"

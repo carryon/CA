@@ -21,8 +21,11 @@ func NewServer(configPath string) *Server {
 	}
 
 	s.config = config
+
 	//init log
 	s.initLog()
+
+	log.Infof("load config %v, db config %v", config, config.DBConfig)
 
 	//init db
 	db := db.NewDB(s.config.DBConfig)
@@ -33,6 +36,7 @@ func NewServer(configPath string) *Server {
 }
 
 func (s *Server) Start() {
+	log.Info("deploy server start...")
 	s.router.start()
 	// go s.msgNet.Start()
 

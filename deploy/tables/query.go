@@ -5,6 +5,7 @@ import (
 )
 
 func QueryAllNode(db *sql.DB) ([]*Node, error) {
+
 	sql := "select * from t_node"
 	rows, err := db.Query(sql)
 	if err != nil {
@@ -15,21 +16,19 @@ func QueryAllNode(db *sql.DB) ([]*Node, error) {
 	var nodes []*Node
 	for rows.Next() {
 		node := NewNode()
-		// if err := rows.Scan(
-		// 	&node.ID,
-		// 	&node.Version,
-		// 	&node.ChainID,
-		// 	&node.NodeID,
-		// 	&node.ConfigFile,
-		// 	&node.Config,
-		// 	&node.Status,
-		// 	&node.Height,
-		// 	&node.Addr,
-		// 	&node.Created,
-		// 	&node.Updated); err != nil {
-		// 	return nil, err
-		// }
-		if err := rows.Scan(&node); err != nil {
+		if err := rows.Scan(
+			&node.ID,
+			&node.Version,
+			&node.ChainID,
+			&node.NodeID,
+			&node.AgentID,
+			&node.ConfigFile,
+			&node.Config,
+			&node.Status,
+			&node.Height,
+			&node.Addr,
+			&node.Created,
+			&node.Updated); err != nil {
 			return nil, err
 		}
 		nodes = append(nodes, node)
@@ -39,7 +38,7 @@ func QueryAllNode(db *sql.DB) ([]*Node, error) {
 }
 
 func QueryAllAgent(db *sql.DB) ([]*Agent, error) {
-	sql := "select *from t_agent"
+	sql := "select * from t_agent"
 	rows, err := db.Query(sql)
 	if err != nil {
 		return nil, err
@@ -49,15 +48,12 @@ func QueryAllAgent(db *sql.DB) ([]*Agent, error) {
 	var agents []*Agent
 	for rows.Next() {
 		agent := NewAgent()
-		// if err := rows.Scan(
-		// 	&agent.ID,
-		// 	&agent.AgentID,
-		// 	&agent.Addr,
-		// 	&agent.Created,
-		// ); err != nil {
-		// 	return nil, err
-		// }
-		if err := rows.Scan(&agent); err != nil {
+		if err := rows.Scan(
+			&agent.ID,
+			&agent.AgentID,
+			&agent.Addr,
+			&agent.Created,
+		); err != nil {
 			return nil, err
 		}
 		agents = append(agents, agent)

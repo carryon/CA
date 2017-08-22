@@ -7,6 +7,7 @@ import (
 	yaml "gopkg.in/yaml.v2"
 
 	"github.com/bocheninc/CA/Agent-Server/config"
+	"github.com/bocheninc/CA/Agent-Server/log"
 	"github.com/bocheninc/CA/Agent-Server/types"
 	"github.com/bocheninc/CA/Agent-Server/utils"
 )
@@ -40,15 +41,18 @@ func (n *NodeInfo) CheckVersion(version string) bool {
 func (n *NodeInfo) Start() error {
 
 	if !n.IsRuning {
-		configFilePath, err := n.writeConfig()
+
+		cert, err := n.writeCert()
 		if err != nil {
 			return err
 		}
 
-		if err := n.writeCert(); err != nil {
+		configFilePath, err := n.writeConfig(cert)
+		if err != nil {
 			return err
 		}
 
+		log.Info("start lcnd pocess :", filepath.Join(config.Cfg.ExecDir, "lcnd"), configFilePath)
 		if err := utils.StartProcess(filepath.Join(config.Cfg.ExecDir, "lcnd"), configFilePath); err != nil {
 			return err
 		}
@@ -61,7 +65,7 @@ func (n *NodeInfo) Stop() error {
 	return utils.StopProcess(n.NodeID)
 }
 
-func (n *NodeInfo) writeConfig() (string, error) {
+func (n *NodeInfo) writeConfig(certConfig *types.CertConfig) (string, error) {
 
 	nodeDir, err := utils.OpenDir(filepath.Join(config.Cfg.LcndDir, n.NodeID))
 	if err != nil {
@@ -81,12 +85,15 @@ func (n *NodeInfo) writeConfig() (string, error) {
 		return "", err
 	}
 
+	n.Config.Vm.JsVMExeFilePath = filepath.Join(config.Cfg.ExecDir, "jsvm")
+	n.Config.Vm.LuaVMExeFilePath = filepath.Join(config.Cfg.ExecDir, "luavm")
+
 	nodeConfig, err := yaml.Marshal(n.Config)
 	if err != nil {
 		return "", err
 	}
 
-	cert, err := yaml.Marshal(n.Cert)
+	cert, err := yaml.Marshal(certConfig)
 	if err != nil {
 		return "", err
 	}
@@ -113,44 +120,53 @@ func (n *NodeInfo) writeConfig() (string, error) {
 	return configFilePath, nil
 }
 
-func (n *NodeInfo) writeCert() error {
+func (n *NodeInfo) writeCert() (*types.CertConfig, error) {
 	nodeDir, err := utils.OpenDir(filepath.Join(config.Cfg.LcndDir, n.NodeID))
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	f, err := utils.OpenFile(filepath.Join(nodeDir, "ca.crt"))
+	caPath := filepath.Join(nodeDir, "ca.crt")
+	f, err := utils.OpenFile(caPath)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	if _, err := f.WriteString(n.Cert.Results.RootCrt); err != nil {
-		return err
+		return nil, err
 	}
 
 	f.Close()
 
-	f, err = utils.OpenFile(filepath.Join(nodeDir, n.NodeID+".key"))
+	keyPath := filepath.Join(nodeDir, n.NodeID+".key")
+	f, err = utils.OpenFile(keyPath)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	if _, err := f.WriteString(n.Cert.Results.AgentKey); err != nil {
-		return err
+		return nil, err
 	}
 
 	f.Close()
 
-	f, err = utils.OpenFile(filepath.Join(nodeDir, n.NodeID+".crt"))
+	crtPath := filepath.Join(nodeDir, n.NodeID+".crt")
+	f, err = utils.OpenFile(crtPath)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	if _, err := f.WriteString(n.Cert.Results.AgentCrt); err != nil {
-		return err
+		return nil, err
 	}
 
 	f.Close()
 
-	return nil
+	cert := new(types.CertConfig)
+
+	cert.Cert.CaPath = caPath
+	cert.Cert.CrtPath = crtPath
+	cert.Cert.KeyPath = keyPath
+
+	return cert, nil
 }

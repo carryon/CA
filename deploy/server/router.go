@@ -43,6 +43,7 @@ func NewRouter(list *List, port string) *Router {
 }
 
 func (r *Router) start() {
+	log.Info("router start ...")
 	go r.eventLoop()
 	go r.stats.statsWorker()
 
@@ -85,7 +86,7 @@ func (r *Router) handle(c *gin.Context) {
 	res.ID = req.ID
 
 	if err != nil {
-		res.Error = err
+		res.Error = err.Error()
 		c.JSON(200, res)
 	}
 
@@ -95,22 +96,22 @@ func (r *Router) handle(c *gin.Context) {
 		var args interface{}
 		params = [1]interface{}{args}
 		if err := json.Unmarshal(*req.Params, &params); err != nil {
-			res.Error = err
+			res.Error = err.Error()
 			c.JSON(200, res)
 		}
 	}
 
 	var result interface{}
-
+	log.Debug("agent request: ", *req)
 	switch req.Method {
 	case "msgnet-config":
 		result, err = msgnetsConfig(params, r.list)
 	case "nodes-config":
 		result, err = nodesConfig(params, r.list)
-	case "lcnd-timestamp":
-		result, err = lcndConfigTimestamp(params, r.list)
-	case "msgnet-timestamp":
-		result, err = msgnetConfigTimestamp(params, r.list)
+	// case "lcnd-timestamp":
+	// 	result, err = lcndConfigTimestamp(params, r.list)
+	// case "msgnet-timestamp":
+	// 	result, err = msgnetConfigTimestamp(params, r.list)
 	case "lcnd-version":
 		result, err = nodeVersion(r.list)
 	case "msgnet-version":
@@ -120,7 +121,8 @@ func (r *Router) handle(c *gin.Context) {
 	}
 	res.Result = result
 	if err != nil {
-		res.Error = fmt.Errorf("error message: %q", err)
+		res.Error = fmt.Errorf("error message: %s", err).Error()
 	}
+
 	c.JSON(200, res)
 }

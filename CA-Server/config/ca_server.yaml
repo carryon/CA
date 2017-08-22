@@ -1,11 +1,11 @@
-deploy_server: "http://127.0.0.1:8080"
+deploy_server: "http://127.0.0.1:8888"
 
-base_dir: "/data/ca_server/"
+base_dir: "data/ca_server/"
 
-root_key: "/data/ca_server/ca_cert/ca.key"
+root_key: "data/ca_server/ca_cert/ca.key"
 
-root_crt: "/data/ca_server/ca_cert/ca.crt"
+root_crt: "data/ca_server/ca_cert/ca.crt"
 
-ca_cert_dir: "/data/ca_server/ca_cert"
+ca_cert_dir: "data/ca_server/ca_cert"
 
-agent_cert_dir: "/data/agent/agent_cert/"
+agent_cert_dir: "data/agent/agent_cert/"

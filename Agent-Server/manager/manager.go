@@ -14,7 +14,10 @@ type Manager struct {
 }
 
 func NewManager() *Manager {
-	return &Manager{}
+	return &Manager{
+		NodeList:   make(map[string]*node.NodeInfo),
+		MsgnetList: make(map[string]*msgnet.MsgnetInfo),
+	}
 }
 
 func (m *Manager) StartNodes() error {

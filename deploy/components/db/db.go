@@ -17,6 +17,7 @@ var (
 )
 
 func open() *sql.DB {
+	log.Info("open db ...")
 	//open db
 	connStr := fmt.Sprintf("%s:%s@tcp(%s:%s)/?charset=utf8&loc=%s&parseTime=true",
 		config.User, config.PWD, config.Host, config.Port, url.QueryEscape(config.Zone))

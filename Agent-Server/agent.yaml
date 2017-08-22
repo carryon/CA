@@ -1,12 +1,15 @@
-id: "123"
+id: "1"
 
 server:
     ca: "http://127.0.0.1:8081"
-    deploy: "http://127.0.0.1:8080"
+    deploy: "http://127.0.0.1:8888"
 
-basedir: "data/"
+basedir: "blockchain/"
 
 URL:
   lcnd: "http://ca.bocheninc.com/lcnd"
   msgnet: "http://ca.bocheninc.com/msg-net"
 
+#log level
+log:
+  level: "debug"

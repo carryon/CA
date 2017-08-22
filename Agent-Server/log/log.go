@@ -23,7 +23,7 @@ import (
 	"os"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/bocheninc/CA/deploy/components/utils"
+	"github.com/bocheninc/CA/Agent-Server/utils"
 )
 
 var (

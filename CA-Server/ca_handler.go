@@ -1,13 +1,12 @@
 package main
 
 import (
-	"bytes"
 	"encoding/json"
 	"flag"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"os"
-	"strings"
 
 	"github.com/bocheninc/L0/components/crypto"
 	"github.com/bocheninc/L0/components/log"
@@ -24,15 +23,15 @@ type Config struct {
 }
 
 type ServerRequest struct {
-	Method string           `json:"method"`
-	Params *json.RawMessage `json:"params"`
-	Id     uint             `json:"id"`
+	Method string   `json:"method"`
+	Params []string `json:"params"`
+	Id     uint     `json:"id"`
 }
 
-type Params []struct {
-	NodeID  string `json:"node_id"`
-	AgentID string `json:"agent_id"`
-}
+// type Params []struct {
+// 	NodeID  string `json:"node_id"`
+// 	AgentID string `json:"agent_id"`
+// }
 
 type NodeCert struct {
 	ID      uint `json:"id"`
@@ -78,6 +77,15 @@ func initConfigFile() {
 			return
 		}
 	}
+
+	if !pathExist(conf.AgentCertDir) {
+		err := os.MkdirAll(conf.AgentCertDir, os.ModePerm)
+		if err != nil {
+			log.Errorln("Create ca cert dir error:", err)
+			return
+		}
+	}
+
 	if *rootPtr {
 		info := crypto.CertInformation{IsCA: true, CrtName: conf.RootCrt, KeyName: conf.RootKey}
 		err := crypto.CreateCRT(nil, nil, info)
@@ -163,68 +171,68 @@ func CaHandler(w http.ResponseWriter, r *http.Request) {
 		log.Errorln("decode request body error:", err)
 		return
 	}
-	jsonByte, err := reqObj.Params.MarshalJSON()
-	if err != nil {
-		log.Errorln("marshal req params json error:", err)
-		return
-	}
+	// jsonByte, err := reqObj.Params.MarshalJSON()
+	// if err != nil {
+	// 	log.Errorln("marshal req params json error:", err)
+	// 	return
+	// }
 
-	params := Params{}
-	err = json.Unmarshal(jsonByte, &params)
-	if err != nil {
-		log.Errorln("unmarshal jsonByte error:", err)
-		return
-	}
+	// params := Params{}
+	// err = json.Unmarshal(jsonByte, &params)
+	// if err != nil {
+	// 	log.Errorln("unmarshal jsonByte error:", err)
+	// 	return
+	// }
 
-	nodeID := params[0].NodeID
-	agentID := params[0].AgentID
+	nodeID := reqObj.Params[1]
+	//agentID := params[0].AgentID
 
-	// get all nodes info
-	req, err := http.NewRequest("POST", conf.DeployServer, bytes.NewBufferString(
-		`{"id":1,"method":"config-timestamp","params":["`+agentID+`"]}`,
-	))
-	req.Header.Set("Content-Type", "application/json")
-	resp, err := client.Do(req)
-	if err != nil {
-		log.Errorln("post %s config-timestamp error:", conf.DeployServer, err)
-		return
-	}
-	defer resp.Body.Close()
+	// // get all nodes info
+	// req, err := http.NewRequest("POST", conf.DeployServer, bytes.NewBufferString(
+	// 	`{"id":1,"method":"config-timestamp","params":["`+agentID+`"]}`,
+	// ))
+	// req.Header.Set("Content-Type", "application/json")
+	// resp, err := client.Do(req)
+	// if err != nil {
+	// 	log.Errorln("post %s config-timestamp error:", conf.DeployServer, err)
+	// 	return
+	// }
+	// defer resp.Body.Close()
 
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		log.Errorln("read config-timestamp response body error:", err)
-		return
-	}
+	// body, err := ioutil.ReadAll(resp.Body)
+	// if err != nil {
+	// 	log.Errorln("read config-timestamp response body error:", err)
+	// 	return
+	// }
 
-	configTimestamp := ConfigTimestamp{}
-	err = json.Unmarshal(body, &configTimestamp)
-	if err != nil {
-		log.Errorln("unmarshal config-timestamp response body error:", err)
-		return
-	}
+	// configTimestamp := ConfigTimestamp{}
+	// err = json.Unmarshal(body, &configTimestamp)
+	// if err != nil {
+	// 	log.Errorln("unmarshal config-timestamp response body error:", err)
+	// 	return
+	// }
 
-	isValid := false
-	for _, item := range configTimestamp.Result {
-		if strings.EqualFold(item.NodeID, nodeID) {
-			isValid = true
-			break
-		}
-	}
+	// isValid := false
+	// for _, item := range configTimestamp.Result {
+	// 	if strings.EqualFold(item.NodeID, nodeID) {
+	// 		isValid = true
+	// 		break
+	// 	}
+	// }
 
 	resObj := new(NodeCert)
-	if !isValid {
-		resObj.ID = reqObj.Id
-		resObj.Error = "error: your node doesn't belong to your agent"
+	// //if !isValid {
+	// resObj.ID = reqObj.Id
+	// resObj.Error = "error: your node doesn't belong to your agent"
 
-		ret, err := json.Marshal(resObj)
-		if err != nil {
-			log.Errorln("marshal resObj error:", err)
-			return
-		}
-		w.Write(ret)
-		return
-	}
+	// ret, err := json.Marshal(resObj)
+	// if err != nil {
+	// 	log.Errorln("marshal resObj error:", err)
+	// 	return
+	// }
+	// w.Write(ret)
+	// return
+	//	}
 
 	baseInfo := crypto.CertInformation{Locality: []string{nodeID}}
 
@@ -232,7 +240,7 @@ func CaHandler(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		resObj.ID = reqObj.Id
-		resObj.Error = "error: ca can't generate agent key and crt"
+		resObj.Error = fmt.Sprintf("ca can't generate agent key and crt %s", err.Error())
 
 		ret, err := json.Marshal(resObj)
 		if err != nil {

@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"path/filepath"
 
 	"github.com/bocheninc/CA/Agent-Server/utils"
@@ -12,6 +13,9 @@ var (
 	defaultExecDirName   = "bin"
 	defaultLcndDirName   = "lcnd"
 	defaultMsgnetDirName = "msgnet"
+	defaultConfigFile    = "agent.yaml"
+	defaultLogLevel      = "debug"
+	defaultLogFilename   = "agent.log"
 )
 
 type Config struct {
@@ -24,11 +28,20 @@ type Config struct {
 	MsgNetDir    string
 	MsgnetURL    string
 	LcndURL      string
+	LogLevel     string
+	LogFile      string
 }
 
-func LoadConfig() (*Config, error) {
+func LoadConfig(cfgfile string) (*Config, error) {
 	var err error
 	conf := new(Config)
+
+	viper.SetConfigFile(cfgfile)
+
+	if err := viper.ReadInConfig(); err != nil {
+		return nil, fmt.Errorf(" viper.ReadInConfig error %s", err)
+	}
+
 	conf.readConfig()
 
 	utils.OpenDir(conf.BaseDir)
@@ -65,4 +78,10 @@ func (c *Config) readConfig() {
 	if msgnet := viper.GetString("URL.msgnet"); msgnet != "" {
 		c.MsgnetURL = msgnet
 	}
+
+	if logLevel := viper.GetString("log.level"); logLevel != "" {
+		c.LogLevel = logLevel
+		c.LogFile = defaultLogFilename
+	}
+
 }

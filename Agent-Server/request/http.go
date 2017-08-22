@@ -3,6 +3,8 @@ package request
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 
@@ -47,7 +49,7 @@ func (r *Request) getMsgnetVersion(id string) (string, error) {
 		Params: []string{id},
 	}
 
-	return r.getVersion(req, config.Cfg.MsgnetURL)
+	return r.getVersion(req, config.Cfg.DeployServer)
 }
 
 func (r *Request) getLcndVersion(id string) (string, error) {
@@ -57,7 +59,7 @@ func (r *Request) getLcndVersion(id string) (string, error) {
 		Params: []string{id},
 	}
 
-	return r.getVersion(req, config.Cfg.LcndURL)
+	return r.getVersion(req, config.Cfg.DeployServer)
 }
 
 func (r *Request) GetLcndConfig(id string) ([]*node.NodeInfo, error) {
@@ -74,7 +76,7 @@ func (r *Request) GetLcndConfig(id string) ([]*node.NodeInfo, error) {
 		return nil, err
 	}
 
-	data, err := r.request(config.Cfg.LcndURL, request)
+	data, err := r.request(config.Cfg.DeployServer, request)
 	if err != nil {
 		return nil, err
 	}
@@ -83,6 +85,10 @@ func (r *Request) GetLcndConfig(id string) ([]*node.NodeInfo, error) {
 	err = json.Unmarshal(data, &serverResponse)
 	if err != nil {
 		return nil, err
+	}
+
+	if serverResponse.Error != nil {
+		return nil, fmt.Errorf("get nodes config: %s", serverResponse.Error.(string))
 	}
 
 	version, err := r.getLcndVersion(id)
@@ -95,7 +101,6 @@ func (r *Request) GetLcndConfig(id string) ([]*node.NodeInfo, error) {
 		if err := json.Unmarshal([]byte(v), nodeConfig); err != nil {
 			return nil, err
 		}
-
 		cert, err := r.getCrt(id, nodeConfig.NodeID)
 		if err != nil {
 			return nil, err
@@ -121,7 +126,7 @@ func (r *Request) GetMsgnetConfig(id string) ([]*msgnet.MsgnetInfo, error) {
 		return nil, err
 	}
 
-	data, err := r.request(config.Cfg.MsgnetURL, request)
+	data, err := r.request(config.Cfg.DeployServer, request)
 	if err != nil {
 		return nil, err
 	}
@@ -130,6 +135,10 @@ func (r *Request) GetMsgnetConfig(id string) ([]*msgnet.MsgnetInfo, error) {
 	err = json.Unmarshal(data, &serverResponse)
 	if err != nil {
 		return nil, err
+	}
+
+	if serverResponse.Error != nil {
+		return nil, errors.New(serverResponse.Error.(string))
 	}
 
 	version, err := r.getMsgnetVersion(id)
@@ -171,7 +180,35 @@ func (r *Request) getCrt(agentID, nodeID string) (*types.NodeCert, error) {
 	if err := json.Unmarshal(data, nodeCert); err != nil {
 		return nil, err
 	}
-	return nodeCert, nodeCert.Error.(error)
+
+	if nodeCert.Error != nil {
+		return nil, fmt.Errorf("get cert :%s", nodeCert.Error.(string))
+	}
+
+	return nodeCert, nil
+}
+func (r *Request) getVersion(req *Req, url string) (string, error) {
+
+	request, err := json.Marshal(req)
+	if err != nil {
+		return "", err
+	}
+
+	data, err := r.request(url, request)
+	if err != nil {
+		return "", err
+	}
+
+	version := new(types.Version)
+	err = json.Unmarshal(data, version)
+	if err != nil {
+		return "", err
+	}
+
+	if version.Error != nil {
+		return "", errors.New(version.Error.(string))
+	}
+	return version.Result.Version, nil
 }
 
 func (r *Request) request(address string, request []byte) ([]byte, error) {
@@ -191,25 +228,4 @@ func (r *Request) request(address string, request []byte) ([]byte, error) {
 		return nil, err
 	}
 	return body, nil
-}
-
-func (r *Request) getVersion(req *Req, url string) (string, error) {
-
-	request, err := json.Marshal(req)
-	if err != nil {
-		return "", err
-	}
-
-	data, err := r.request(url, request)
-	if err != nil {
-		return "", err
-	}
-
-	version := new(types.Version)
-	err = json.Unmarshal(data, version)
-	if err != nil {
-		return "", err
-	}
-
-	return version.Result.Version, version.Error.(error)
 }
