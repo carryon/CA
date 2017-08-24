@@ -5,7 +5,6 @@ import (
 	"sync"
 
 	"github.com/bocheninc/CA/deploy/components/log"
-
 	"github.com/bocheninc/CA/deploy/tables"
 )
 

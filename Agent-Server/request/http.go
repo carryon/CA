@@ -9,6 +9,7 @@ import (
 	"net/http"
 
 	"github.com/bocheninc/CA/Agent-Server/config"
+	"github.com/bocheninc/CA/Agent-Server/log"
 	"github.com/bocheninc/CA/Agent-Server/manager/msgnet"
 	"github.com/bocheninc/CA/Agent-Server/manager/node"
 	"github.com/bocheninc/CA/Agent-Server/types"
@@ -73,36 +74,42 @@ func (r *Request) GetLcndConfig(id string) ([]*node.NodeInfo, error) {
 
 	request, err := json.Marshal(req)
 	if err != nil {
+		log.Error("req err", err, string(request))
 		return nil, err
 	}
 
 	data, err := r.request(config.Cfg.DeployServer, request)
 	if err != nil {
+		log.Error("data err", err, string(data))
 		return nil, err
 	}
 
 	serverResponse := new(Resp)
 	err = json.Unmarshal(data, &serverResponse)
 	if err != nil {
+		log.Error("serverResponse err", err, "----->", string(data))
 		return nil, err
 	}
 
 	if serverResponse.Error != nil {
-		return nil, fmt.Errorf("get nodes config: %s", serverResponse.Error.(string))
+		return nil, fmt.Errorf("get nodes config resp: %s", serverResponse.Error.(string))
 	}
 
 	version, err := r.getLcndVersion(id)
 	if err != nil {
+		log.Error("get lcnf version ", err)
 		return nil, err
 	}
 
 	for _, v := range serverResponse.Result {
 		nodeConfig := new(types.NodeConfig)
 		if err := json.Unmarshal([]byte(v), nodeConfig); err != nil {
+			log.Error("node", err, v)
 			return nil, err
 		}
 		cert, err := r.getCrt(id, nodeConfig.NodeID)
 		if err != nil {
+			log.Error("get crt err", err, *cert)
 			return nil, err
 		}
 		node := node.NewNodeInfo(nodeConfig.NodeID, version, nodeConfig, cert)
