@@ -1,29 +1,31 @@
 package server
 
-// import (
-// 	"github.com/bocheninc/L0/components/utils"
-// )
+import (
+	"github.com/bocheninc/CA/deploy/components/utils"
+)
 
-// const (
-// 	ChainTxMsg = iota + 100
-// 	ChainConsensusMsg
-// 	ChainMergeTxsMsg
-// 	ChainAckMergeTxsMsg
-// 	ChainAckedMergeTxsMsg
-// )
+const (
+	ChainChangeCfgMsg = iota + 106
+	ChainNodeStatusMsg
+)
 
-// // Message represents the message transfer in msg-net
-// type Message struct {
-// 	Cmd     uint8
-// 	Payload []byte
-// }
+type ChangeCfg struct {
+	ChainID string
+	Message *Message
+}
 
-// // Serialize message to bytes
-// func (m *Message) Serialize() []byte {
-// 	return utils.Serialize(*m)
-// }
+// Message represents the message transfer in msg-net
+type Message struct {
+	Cmd     uint8
+	Payload []byte
+}
 
-// // Deserialize bytes to message
-// func (m *Message) Deserialize(data []byte) {
-// 	utils.Deserialize(data, m)
-// }
+// Serialize message to bytes
+func (m *Message) Serialize() []byte {
+	return utils.Serialize(*m)
+}
+
+// Deserialize bytes to message
+func (m *Message) Deserialize(data []byte) {
+	utils.Deserialize(data, m)
+}

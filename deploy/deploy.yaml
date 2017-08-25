@@ -13,3 +13,7 @@ db:
   password: "123456"
   host: "192.168.9.14"
   port: "3306"
+
+#msgnet
+msgnet:
+  addresses: ["127.0.0.1:10001"]

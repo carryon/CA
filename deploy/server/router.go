@@ -35,7 +35,7 @@ func NewRouter(list *List, port string) *Router {
 	gin.SetMode(gin.DebugMode)
 	return &Router{
 		port:   port,
-		ticker: time.NewTicker(5 * time.Second),
+		ticker: time.NewTicker(10 * time.Second),
 		engine: gin.Default(),
 		list:   list,
 		stats:  NewStats(),
@@ -45,9 +45,8 @@ func NewRouter(list *List, port string) *Router {
 func (r *Router) start() {
 	log.Info("router start ...")
 	go r.eventLoop()
-	go r.stats.statsWorker()
-
-	r.engine.Use(r.rateLimit, gin.Recovery())
+	//go r.stats.statsWorker()
+	//r.engine.Use(r.rateLimit, gin.Recovery())
 
 	r.engine.POST("/", r.handle)
 	r.engine.Run(":" + r.port)

@@ -28,11 +28,12 @@ var (
 )
 
 type Config struct {
-	LogLevel string
-	LogFile  string
-	LogDir   string
-	Port     string
-	DBConfig *db.MysqldbConfig
+	LogLevel        string
+	LogFile         string
+	LogDir          string
+	Port            string
+	RouterAddresses []string
+	DBConfig        *db.MysqldbConfig
 }
 
 // New returns a config according the config file
@@ -52,16 +53,18 @@ func loadConfig(cfgFile string) (conf *Config, err error) {
 		if err := viper.ReadInConfig(); err != nil {
 			log.Warnf("no config file, run as default config! viper.ReadInConfig error %s", err)
 		}
+		cfg.LogDir, err = utils.OpenDir(defaultLogDirname)
+		if err != nil {
+			log.Error(err)
+		}
+
+		cfg.readLogConfig()
+		cfg.readDBConfig()
+		cfg.readPort()
+		cfg.readMsgnetAddresses()
+		return cfg, nil
 	}
 
-	cfg.LogDir, err = utils.OpenDir(defaultLogDirname)
-	if err != nil {
-		log.Error(err)
-	}
-
-	cfg.readLogConfig()
-	cfg.readDBConfig()
-	cfg.readPort()
 	return cfg, nil
 }
 
@@ -98,5 +101,11 @@ func (cfg *Config) readDBConfig() {
 func (cfg *Config) readPort() {
 	if port := viper.GetString("listen.port"); port != "" {
 		cfg.Port = port
+	}
+}
+
+func (cfg *Config) readMsgnetAddresses() {
+	if routerAddresses := viper.GetStringSlice("msgnet.addresses"); routerAddresses != nil {
+		cfg.RouterAddresses = routerAddresses
 	}
 }

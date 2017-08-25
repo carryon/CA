@@ -5,7 +5,6 @@ import (
 
 	"fmt"
 
-	"github.com/bocheninc/CA/deploy/components/log"
 	yaml "gopkg.in/yaml.v2"
 )
 
@@ -43,7 +42,7 @@ func nodesConfig(params interface{}, list *List) (interface{}, error) {
 		}
 		result = append(result, string(r))
 	}
-	log.Debug("nodes Config result : %v", result, len(nodes))
+	//log.Debugf("nodes Config result : %v len: %d", result, len(nodes))
 	return result, nil
 }
 

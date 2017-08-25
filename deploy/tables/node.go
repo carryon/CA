@@ -2,6 +2,7 @@ package tables
 
 import (
 	"database/sql"
+	"fmt"
 	"time"
 )
 
@@ -25,16 +26,35 @@ func NewNode() *Node {
 }
 
 func (n *Node) Insert(tx *sql.Tx) error {
-
+	//todo
 	return nil
 }
 
-func (n *Node) Update(tx *sql.Tx) error {
+func (n *Node) UpdateHeight(tx *sql.Tx) error {
+	res, err := tx.Exec("update t_node set f_height=? where f_chain_id=? and f_node_id=?", n.Height, n.ChainID, n.NodeID)
+	if err != nil {
+		return err
+	}
 
+	if n, _ := res.RowsAffected(); n == 0 {
+		return fmt.Errorf("not found")
+	}
+	return nil
+}
+
+func (n *Node) UpdateAllConfig(tx *sql.Tx) error {
+	res, err := tx.Exec("update t_node set f_config=? where f_chain_id=? ", n.Config, n.ChainID)
+	if err != nil {
+		return err
+	}
+
+	if n, _ := res.RowsAffected(); n == 0 {
+		return fmt.Errorf("not found ")
+	}
 	return nil
 }
 
 func (n *Node) Delete(tx *sql.Tx, condition string) error {
-
+	//todo
 	return nil
 }
