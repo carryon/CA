@@ -3,6 +3,12 @@
 	"ignore": "test",
 	"package": [
 		{
+			"checksumSHA1": "yL7+xJ/LiY7OiN4vO3/R458/6qo=",
+			"path": "github.com/Sirupsen/logrus",
+			"revision": "f006c2ac4710855cf0f916dd6b77acf6b048dc6e",
+			"revisionTime": "2017-08-15T20:20:55Z"
+		},
+		{
 			"checksumSHA1": "bW5/uowQWPjtPSVUWT/EePH1BGM=",
 			"path": "github.com/bocheninc/L0/components/log",
 			"revision": "6dd93b46a40cf5d0ee452bbca2fe19017ec2b649",
@@ -13,6 +19,18 @@
 			"path": "github.com/ghodss/yaml",
 			"revision": "0ca9ea5df5451ffdf184b4428c902747c2c11cd7",
 			"revisionTime": "2017-03-27T23:54:44Z"
+		},
+		{
+			"checksumSHA1": "lU+gVOtSFnBKx11uhPL8b9v0uTE=",
+			"path": "github.com/spf13/cobra",
+			"revision": "7be4beda01ec05d0b93d80b3facd2b6f44080d94",
+			"revisionTime": "2017-03-14T17:12:53Z"
+		},
+		{
+			"checksumSHA1": "cNe3MKwsFLDRzRjKEtOduUiG344=",
+			"path": "github.com/spf13/viper",
+			"revision": "7538d73b4eb9511d85a9f1dfef202eeb8ac260f4",
+			"revisionTime": "2017-02-17T16:38:17Z"
 		},
 		{
 			"checksumSHA1": "0KwOlQV1dNUh9X8t+5s7nX5bqfk=",

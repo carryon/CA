@@ -50,9 +50,6 @@ func (l *List) UpdateNodeList() {
 	if err != nil {
 		log.Error("query all node error: ", err)
 	}
-	for _, v := range nodes {
-		log.Debug("query node info", v.NodeID, " config: ", v.Config)
-	}
 
 	for _, v := range nodes {
 		tmpNodeList[v.AgentID] = append(tmpNodeList[v.AgentID], v)
