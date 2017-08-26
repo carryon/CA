@@ -55,7 +55,7 @@ func (s *Server) changeNodeConfigLoop() {
 	for {
 		select {
 		case msg := <-s.router.list.msgChan:
-			s.msgNet.SendMsgnetMessage(defaultAddr, msg.ChainID, msg.Message)
+			s.msgNet.SendMsgnetMessage(defaultAddr, msg.ChainID+":", msg.Message)
 		}
 	}
 }

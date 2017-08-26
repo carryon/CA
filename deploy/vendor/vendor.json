@@ -21,6 +21,24 @@
 			"revisionTime": "2017-06-15T20:59:37Z"
 		},
 		{
+			"checksumSHA1": "tbWlTUkquYStSkOA3Eft4UANGKU=",
+			"path": "github.com/bocheninc/msg-net/net/common",
+			"revision": "8ff06268faa31a0fa7820118181112a210b5e655",
+			"revisionTime": "2017-08-24T03:21:41Z"
+		},
+		{
+			"checksumSHA1": "1T1UuCkwHETuwe8OU1N68ZVPlv4=",
+			"path": "github.com/bocheninc/msg-net/net/p2p",
+			"revision": "8ff06268faa31a0fa7820118181112a210b5e655",
+			"revisionTime": "2017-08-24T03:21:41Z"
+		},
+		{
+			"checksumSHA1": "vVkOTL5fDrSgKyLSNahPqggAUDQ=",
+			"path": "github.com/bocheninc/msg-net/net/tcp",
+			"revision": "8ff06268faa31a0fa7820118181112a210b5e655",
+			"revisionTime": "2017-08-24T03:21:41Z"
+		},
+		{
 			"checksumSHA1": "34H0Q5+mOa0O9fepNONf7ThL4uE=",
 			"path": "github.com/bocheninc/msg-net/peer",
 			"revision": "56dfcd4ca69bcaf2f04dd3d14c42386921d0dc55",

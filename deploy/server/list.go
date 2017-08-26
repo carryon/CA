@@ -28,6 +28,13 @@ func NewList(db *sql.DB) *List {
 func (l *List) UpdateNodeList() {
 	l.Lock()
 	defer l.Unlock()
+
+	type nodeConfig struct {
+		update bool
+		config string
+	}
+
+	updateConfig := make(map[string]*nodeConfig)
 	tmpNodeList := make(map[string][]*tables.Node)
 
 	agents, err := tables.QueryAllAgent(l.Db)
@@ -43,36 +50,32 @@ func (l *List) UpdateNodeList() {
 	if err != nil {
 		log.Error("query all node error: ", err)
 	}
+	for _, v := range nodes {
+		log.Debug("query node info", v.NodeID, " config: ", v.Config)
+	}
 
 	for _, v := range nodes {
 		tmpNodeList[v.AgentID] = append(tmpNodeList[v.AgentID], v)
-		if _, ok := l.NodeList[v.AgentID]; ok {
-			for _, node := range l.NodeList[v.AgentID] {
-				if v.NodeID == node.NodeID {
-					// node exist but node.config change
-					if v.Config != node.Config {
-						//make msg
-
-						msg := new(Message)
-						msg.Cmd = ChainChangeCfgMsg
-						msg.Payload = []byte(v.Config)
-						l.msgChan <- &ChangeCfg{ChainID: v.ChainID, Message: msg}
-
-						//update other node config
-						tx, _ := l.Db.Begin()
-						log.Debug("begin...", v.NodeID, v.Config, node.NodeID, node.Config)
-						if err := v.UpdateAllConfig(tx); err != nil {
-							log.Errorf(" chainID: %s, nodeID: %s update config %s, err: %v", node.ChainID, node.NodeID, node.Config, err)
-							tx.Rollback()
-						}
-						tx.Commit()
-					}
-
-				}
-
-			}
+		//initialization
+		if _, ok := updateConfig[v.AgentID]; !ok {
+			updateConfig[v.AgentID] = &nodeConfig{update: false}
 		}
 
+		if _, ok := l.NodeList[v.AgentID]; ok {
+			if !updateConfig[v.AgentID].update {
+				if l.updateAllConfig(v, l.NodeList[v.AgentID]) {
+					updateConfig[v.AgentID] = &nodeConfig{update: true, config: v.Config}
+				}
+			}
+		}
+	}
+
+	for k, v := range updateConfig {
+		if v.update {
+			for _, node := range tmpNodeList[k] {
+				node.Config = v.config
+			}
+		}
 	}
 
 	l.NodeList = tmpNodeList
@@ -97,10 +100,26 @@ func (l *List) MessageChan() <-chan *ChangeCfg {
 	return l.msgChan
 }
 
-func (l *List) nodeIsExist(node *tables.Node, array []*tables.Node) bool {
+func (l *List) updateAllConfig(node *tables.Node, array []*tables.Node) bool {
 	for _, v := range array {
 		if node.NodeID == v.NodeID {
-			return true
+			if node.Config != v.Config {
+				log.Debug("begin...", v.NodeID, " config: ", v.Config, " nodeID: ", node.NodeID, " node.config: ", node.Config)
+				//make msg
+				msg := new(Message)
+				msg.Cmd = ChainChangeCfgMsg
+				msg.Payload = []byte(node.Config)
+				l.msgChan <- &ChangeCfg{ChainID: v.ChainID, Message: msg}
+
+				//update other node config
+				tx, _ := l.Db.Begin()
+				if err := node.UpdateAllConfig(tx); err != nil {
+					log.Errorf(" chainID: %s, nodeID: %s update config %s, err: %v", node.ChainID, node.NodeID, node.Config, err)
+					tx.Rollback()
+				}
+				tx.Commit()
+				return true
+			}
 		}
 	}
 	return false

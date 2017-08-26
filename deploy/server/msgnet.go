@@ -27,12 +27,12 @@ func NewMsgnet(id string, routeAddress []string, fn MsgHandler, logOutPath strin
 
 func (m *MsgNet) Start() {
 	m.peer.Start()
-	log.Debug("Msg-net Service Start ...")
+	log.Info("Msg-net Service Start ...")
 }
 
 func (m *MsgNet) SendMsgnetMessage(src, dst string, msg *Message) bool {
 	//todo signature
 	log.Debugf("==============send data=========== cmd : %v, payload: %v ", msg.Cmd, string(msg.Payload))
-	return m.peer.Send(dst, msg.Serialize(), []byte("deploy"))
+	return m.peer.Send(dst, msg.Serialize(), nil)
 
 }
