@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/bocheninc/CA/deploy/components/log"
+	"github.com/bocheninc/CA/deploy/tables"
 	"github.com/gin-gonic/gin"
 )
 
@@ -60,6 +61,12 @@ func (r *Router) eventLoop() {
 		case <-r.ticker.C:
 			r.list.UpdateNodeList()
 			log.Debugf("update node list: %v ,update agent list: %v", r.list.NodeList, r.list.AgentList)
+
+			tps, err := tables.QueryAllTps(r.list.Db)
+			if err != nil {
+				log.Error("query all tps ", err)
+			}
+			log.Infof("==========tps: %d==========", tps)
 		}
 	}
 }

@@ -19,8 +19,8 @@ var (
 func open() *sql.DB {
 	log.Info("open db ...")
 	//open db
-	connStr := fmt.Sprintf("%s:%s@tcp(%s:%s)/?charset=utf8&loc=%s&parseTime=true",
-		config.User, config.PWD, config.Host, config.Port, url.QueryEscape(config.Zone))
+	connStr := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&loc=%s&parseTime=true",
+		config.User, config.PWD, config.Host, config.Port, config.Name, url.QueryEscape(config.Zone))
 	sqldb, err := sql.Open("mysql", connStr)
 	if err != nil {
 		log.Errorf("open mysql error connStr=%s err=%v", connStr, err)
@@ -32,12 +32,12 @@ func open() *sql.DB {
 	if err := sqldb.Ping(); err != nil {
 		log.Error(err)
 	}
-	if _, err := sqldb.Exec(fmt.Sprintf("create database if not exists %s;", config.Name)); err != nil {
-		log.Error(err)
-	}
-	if _, err := sqldb.Exec(fmt.Sprintf("use %s;", config.Name)); err != nil {
-		log.Error(err)
-	}
+	// if _, err := sqldb.Exec(fmt.Sprintf("create database if not exists %s;", config.Name)); err != nil {
+	// 	log.Error(err)
+	// }
+	// if _, err := sqldb.Exec(fmt.Sprintf("use %s;", config.Name)); err != nil {
+	// 	log.Error(err)
+	// }
 
 	// if not exists create tables
 	//create agent table

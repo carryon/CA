@@ -1,9 +1,11 @@
 package server
 
 import (
-	"encoding/binary"
 	"encoding/hex"
+	"encoding/json"
+	"strconv"
 	"strings"
+	"time"
 
 	"github.com/bocheninc/CA/deploy/components/db"
 	"github.com/bocheninc/CA/deploy/components/log"
@@ -80,7 +82,18 @@ func (s *Server) handleMsgnetMessage(src, dst string, payload, signature []byte)
 			return err
 		}
 
-		node.Height = int(binary.LittleEndian.Uint32(msg.Payload))
+		type Status struct {
+			Height int
+			Tps    int
+		}
+
+		status := new(Status)
+
+		json.Unmarshal(msg.Payload, status)
+
+		node.Height = status.Height
+		node.Status = strconv.Itoa(status.Tps)
+		node.Updated = time.Now()
 
 		tx, _ := s.router.list.Db.Begin()
 		if err := node.UpdateHeight(tx); err != nil {
@@ -90,7 +103,7 @@ func (s *Server) handleMsgnetMessage(src, dst string, payload, signature []byte)
 		}
 		tx.Commit()
 
-		log.Debugln("recv node report status ", chainID, peerID, node.Height)
+		log.Debugln("recv node report status ", chainID, peerID, node.Height, node.Status)
 	default:
 		log.Warn("recv not know msgnet.type: ", msg.Cmd)
 	}

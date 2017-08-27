@@ -2,6 +2,7 @@ package tables
 
 import (
 	"database/sql"
+	"strconv"
 )
 
 func QueryAllNode(db *sql.DB) ([]*Node, error) {
@@ -60,4 +61,37 @@ func QueryAllAgent(db *sql.DB) ([]*Agent, error) {
 	}
 
 	return agents, nil
+}
+
+func QueryAllTps(db *sql.DB) (int, error) {
+
+	type tps struct {
+		ChainID string `json:"f_chain_id"`
+		Tps     string `json:"f_status"`
+	}
+
+	sql := "SELECT f_chain_id, f_status FROM t_node WHERE f_updated_at >= NOW()-INTERVAL 20 SECOND"
+	rows, err := db.Query(sql)
+	if err != nil {
+		return 0, err
+	}
+	defer rows.Close()
+
+	var allTps int
+	for rows.Next() {
+		tps := new(tps)
+		if err := rows.Scan(
+			&tps.ChainID,
+			&tps.Tps,
+		); err != nil {
+			return 0, err
+		}
+		t, err := strconv.Atoi(tps.Tps)
+		if err != nil {
+			return 0, err
+		}
+		allTps += t
+	}
+
+	return allTps / 4, nil
 }

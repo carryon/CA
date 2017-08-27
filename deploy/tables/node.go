@@ -31,7 +31,7 @@ func (n *Node) Insert(tx *sql.Tx) error {
 }
 
 func (n *Node) UpdateHeight(tx *sql.Tx) error {
-	res, err := tx.Exec("update t_node set f_height=? where f_chain_id=? and f_node_id=?", n.Height, n.ChainID, n.NodeID)
+	res, err := tx.Exec("update t_node set f_height=?, f_status=?, f_updated_at=? where f_chain_id=? and f_node_id=?", n.Height, n.Status, n.Updated, n.ChainID, n.NodeID)
 	if err != nil {
 		return err
 	}
