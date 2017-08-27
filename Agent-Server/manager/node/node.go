@@ -68,7 +68,7 @@ func (n *NodeInfo) Stop() error {
 	log.Infof("stop lcnd %s ,pid: %d and remove file", n.NodeID, n.cmd.Process.Pid)
 
 	if err := n.cmd.Process.Kill(); err != nil {
-		return err
+		log.Error("kill ", n.NodeID, " error ", err)
 	}
 
 	return utils.RemoveFile(filepath.Join(config.Cfg.LcndDir, n.NodeID))
