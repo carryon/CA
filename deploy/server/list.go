@@ -3,6 +3,7 @@ package server
 import (
 	"database/sql"
 	"fmt"
+	"strconv"
 	"sync"
 
 	"github.com/bocheninc/CA/deploy/components/log"
@@ -105,7 +106,8 @@ func (l *List) updateAllConfig(node *tables.Node, array []*tables.Node) bool {
 				//make msg
 				msg := new(Message)
 				msg.Cmd = ChainChangeCfgMsg
-				msg.Payload = []byte(node.Config)
+				size, _ := strconv.Atoi(node.Config)
+				msg.Payload = []byte(strconv.Itoa(int(size / 10)))
 				l.msgChan <- &ChangeCfg{ChainID: v.ChainID, Message: msg}
 
 				//update other node config
