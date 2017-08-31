@@ -70,7 +70,7 @@ func QueryAllTps(db *sql.DB) (int, error) {
 		Tps     string `json:"f_status"`
 	}
 
-	sql := "SELECT f_chain_id, f_status FROM t_node WHERE f_updated_at >= NOW()-INTERVAL 20 SECOND"
+	sql := "SELECT f_chain_id, f_status FROM t_node WHERE f_updated_at >= NOW()-INTERVAL 60 SECOND"
 	rows, err := db.Query(sql)
 	if err != nil {
 		return 0, err
