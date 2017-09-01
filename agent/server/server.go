@@ -3,10 +3,10 @@ package sever
 import (
 	"time"
 
-	"github.com/bocheninc/CA/Agent-Server/config"
-	"github.com/bocheninc/CA/Agent-Server/log"
-	"github.com/bocheninc/CA/Agent-Server/manager"
-	"github.com/bocheninc/CA/Agent-Server/request"
+	"github.com/bocheninc/CA/agent/config"
+	"github.com/bocheninc/CA/agent/log"
+	"github.com/bocheninc/CA/agent/manager"
+	"github.com/bocheninc/CA/agent/request"
 )
 
 type Server struct {

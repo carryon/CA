@@ -3,7 +3,7 @@ package msgnet
 import (
 	"sync"
 
-	"github.com/bocheninc/CA/Agent-Server/types"
+	"github.com/bocheninc/CA/agent/types"
 )
 
 type MsgnetInfo struct {

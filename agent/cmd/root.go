@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/bocheninc/CA/Agent-Server/config"
-	s "github.com/bocheninc/CA/Agent-Server/server"
+	"github.com/bocheninc/CA/agent/config"
+	s "github.com/bocheninc/CA/agent/server"
 	"github.com/bocheninc/L0/components/log"
 	"github.com/spf13/cobra"
 )

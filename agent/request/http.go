@@ -8,11 +8,11 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/bocheninc/CA/Agent-Server/config"
-	"github.com/bocheninc/CA/Agent-Server/log"
-	"github.com/bocheninc/CA/Agent-Server/manager/msgnet"
-	"github.com/bocheninc/CA/Agent-Server/manager/node"
-	"github.com/bocheninc/CA/Agent-Server/types"
+	"github.com/bocheninc/CA/agent/config"
+	"github.com/bocheninc/CA/agent/log"
+	"github.com/bocheninc/CA/agent/manager/msgnet"
+	"github.com/bocheninc/CA/agent/manager/node"
+	"github.com/bocheninc/CA/agent/types"
 )
 
 type Resp struct {

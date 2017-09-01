@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"path/filepath"
 
-	"github.com/bocheninc/CA/Agent-Server/utils"
+	"github.com/bocheninc/CA/agent/utils"
 	"github.com/spf13/viper"
 )
 

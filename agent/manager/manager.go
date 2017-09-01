@@ -3,8 +3,8 @@ package manager
 import (
 	"sync"
 
-	"github.com/bocheninc/CA/Agent-Server/manager/msgnet"
-	"github.com/bocheninc/CA/Agent-Server/manager/node"
+	"github.com/bocheninc/CA/agent/manager/msgnet"
+	"github.com/bocheninc/CA/agent/manager/node"
 )
 
 type Manager struct {

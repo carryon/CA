@@ -8,10 +8,10 @@ import (
 
 	yaml "gopkg.in/yaml.v2"
 
-	"github.com/bocheninc/CA/Agent-Server/config"
-	"github.com/bocheninc/CA/Agent-Server/log"
-	"github.com/bocheninc/CA/Agent-Server/types"
-	"github.com/bocheninc/CA/Agent-Server/utils"
+	"github.com/bocheninc/CA/agent/config"
+	"github.com/bocheninc/CA/agent/log"
+	"github.com/bocheninc/CA/agent/types"
+	"github.com/bocheninc/CA/agent/utils"
 )
 
 type NodeInfo struct {
