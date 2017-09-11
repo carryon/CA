@@ -22,15 +22,16 @@ import (
 
 type NodeInfo struct {
 	sync.RWMutex
-	NodeID     string
-	Config     *types.NodeConfig
-	Cert       *types.NodeCert
-	CaConfig   *types.CAConfig
-	ConfigPath string
 	IsRuning   bool
+	NodeID     string
+	ConfigPath string
 	Version    string
-	cmd        *exec.Cmd
 	nodeDir    string
+
+	cmd      *exec.Cmd
+	Config   *types.NodeConfig
+	Cert     *types.NodeCert
+	CaConfig *types.CAConfig
 }
 
 func NewNodeInfo(ID, version string, nodeConfig *types.NodeConfig, cert *types.NodeCert) *NodeInfo {
@@ -135,7 +136,6 @@ func (n *NodeInfo) writeConfig() error {
 		return err
 	}
 
-	n.Config.Blockchain.Datadir = filepath.Join(config.Cfg.BaseDir, n.NodeID)
 	n.Config.Vm.JsVMExeFilePath = filepath.Join(config.Cfg.ExecDir, "jsvm")
 	n.Config.Vm.LuaVMExeFilePath = filepath.Join(config.Cfg.ExecDir, "luavm")
 

@@ -91,13 +91,8 @@ func (r *Request) GetLcndConfig(id string) ([]*node.NodeInfo, error) {
 			log.Error("node", err, v)
 			return nil, err
 		}
-		cert, err := r.getCrt(nodeConfig.Blockchain.ChainID, nodeConfig.Blockchain.NodeID)
-		if err != nil {
-			log.Error("get crt err", err)
-			return nil, err
-		}
 
-		node := node.NewNodeInfo(nodeConfig.Blockchain.NodeID, version, nodeConfig, cert)
+		node := node.NewNodeInfo(nodeConfig.Blockchain.NodeID, version, nodeConfig, nil)
 		nodes = append(nodes, node)
 	}
 
@@ -151,7 +146,7 @@ func (r *Request) GetMsgnetConfig(id string) ([]*msgnet.MsgnetInfo, error) {
 
 }
 
-func (r *Request) getCrt(chainID, nodeID string) (*types.NodeCert, error) {
+func (r *Request) GetCrt(chainID, nodeID string) (*types.NodeCert, error) {
 	//generate key
 	rsaKey, err := rsa.GenerateKey(rand.Reader, 2048)
 	if err != nil {

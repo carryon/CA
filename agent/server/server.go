@@ -3,21 +3,17 @@ package sever
 import (
 	"time"
 
-	"github.com/bocheninc/CA/agent/config"
 	"github.com/bocheninc/CA/agent/log"
 	"github.com/bocheninc/CA/agent/manager"
-	"github.com/bocheninc/CA/agent/request"
 )
 
 type Server struct {
-	req     *request.Request
 	ticker  *time.Ticker
 	manager *manager.Manager
 }
 
 func NewServer() *Server {
 	return &Server{
-		req:     request.NewRequest(),
 		ticker:  time.NewTicker(10 * time.Second),
 		manager: manager.NewManager(),
 	}
@@ -30,11 +26,7 @@ func (s *Server) Start() {
 	for {
 		select {
 		case <-s.ticker.C:
-			nodes, err := s.req.GetLcndConfig(config.Cfg.ID)
-			if err != nil {
-				log.Error("Get nodes config err: ", err)
-			}
-			if err := s.manager.UpdateNodes(nodes); err != nil {
+			if err := s.manager.UpdateNodes(); err != nil {
 				log.Error("update nodes err: ", err)
 			}
 			if err := s.manager.StartNodes(); err != nil {
