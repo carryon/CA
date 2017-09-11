@@ -2,6 +2,7 @@ package tables
 
 import (
 	"database/sql"
+	"fmt"
 	"strconv"
 )
 
@@ -94,4 +95,32 @@ func QueryAllTps(db *sql.DB) (int, error) {
 	}
 
 	return allTps / 4, nil
+}
+
+func QueryCertByID(db *sql.DB, chainID, nodeID string) ([]*Cert, error) {
+	sql := fmt.Sprintf("select f_id, f_chain_id, f_node_id, f_crt, f_publicKey, f_root_crt, f_created_at from t_cert where f_chain_id='%s' and f_node_id='%s'", chainID, nodeID)
+	rows, err := db.Query(sql)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var certs []*Cert
+	for rows.Next() {
+		cert := new(Cert)
+		if err := rows.Scan(
+			&cert.ID,
+			&cert.ChainID,
+			&cert.NodeID,
+			&cert.Crt,
+			&cert.PublicKey,
+			&cert.RootCrt,
+			&cert.Created,
+		); err != nil {
+			return nil, err
+		}
+
+		certs = append(certs, cert)
+	}
+	return certs, nil
 }

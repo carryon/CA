@@ -32,6 +32,7 @@ func open() *sql.DB {
 	if err := sqldb.Ping(); err != nil {
 		log.Error(err)
 	}
+
 	// if _, err := sqldb.Exec(fmt.Sprintf("create database if not exists %s;", config.Name)); err != nil {
 	// 	log.Error(err)
 	// }
@@ -70,6 +71,21 @@ func open() *sql.DB {
 )ENGINE=INNODB DEFAULT CHARSET=utf8mb4 COMMENT='节点表';`
 	if _, err := sqldb.Exec(CreateNodeTableSQL); err != nil {
 		log.Error("create Node Table Sql error:", err)
+	}
+
+	//create cert table
+	CreateCertTableSQL := `CREATE TABLE IF NOT EXISTS t_cert (
+	f_id BIGINT(20) UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+	f_chain_id VARCHAR(255) NOT NULL COMMENT '链ID',
+	f_node_id VARCHAR(255) NOT NULL COMMENT '节点ID',
+	f_crt TEXT(10240) NOT NULL COMMENT '证书', 
+	f_publicKey TEXT(10240) NOT NULL COMMENT '公钥',
+	f_root_crt TEXT(10240) NOT NULL COMMENT '根证书',
+	f_created_at DATETIME COMMENT '创建时间',
+	UNIQUE KEY uniq_chain_id_node_id (f_chain_id,f_node_id)
+)ENGINE=INNODB DEFAULT CHARSET=utf8mb4 COMMENT='证书表';`
+	if _, err := sqldb.Exec(CreateCertTableSQL); err != nil {
+		log.Error("create cert Table Sql error:", err)
 	}
 	return sqldb
 }

@@ -12,9 +12,9 @@ import (
 )
 
 type serverRequest struct {
-	Method string           `json:"method"`
-	Params *json.RawMessage `json:"params"`
-	ID     uint             `json:"id"`
+	Method string   `json:"method"`
+	Params []string `json:"params"`
+	ID     uint     `json:"id"`
 }
 
 type serverResponse struct {
@@ -29,9 +29,10 @@ type Router struct {
 	engine *gin.Engine
 	list   *List
 	stats  *Stats
+	ca     *Ca
 }
 
-func NewRouter(list *List, port string) *Router {
+func NewRouter(list *List, ca *Ca, port string) *Router {
 	//gin.SetMode(gin.ReleaseMode)
 	gin.SetMode(gin.DebugMode)
 	return &Router{
@@ -40,6 +41,7 @@ func NewRouter(list *List, port string) *Router {
 		engine: gin.Default(),
 		list:   list,
 		stats:  NewStats(),
+		ca:     ca,
 	}
 }
 
@@ -66,7 +68,7 @@ func (r *Router) eventLoop() {
 			if err != nil {
 				log.Error("query all tps ", err)
 			}
-			log.Infof("==========tps: %d==========", tps)
+			log.Infof("==========tps: %d ==========", tps)
 		}
 	}
 }
@@ -98,24 +100,13 @@ func (r *Router) handle(c *gin.Context) {
 		c.JSON(200, res)
 	}
 
-	var params [1]interface{}
-
-	if req.Params != nil {
-		var args interface{}
-		params = [1]interface{}{args}
-		if err := json.Unmarshal(*req.Params, &params); err != nil {
-			res.Error = err.Error()
-			c.JSON(200, res)
-		}
-	}
-
 	var result interface{}
 	log.Debug("agent request: ", *req)
 	switch req.Method {
 	case "msgnet-config":
-		result, err = msgnetsConfig(params, r.list)
+		result, err = msgnetsConfig(req.Params, r.list)
 	case "nodes-config":
-		result, err = nodesConfig(params, r.list)
+		result, err = nodesConfig(req.Params, r.list)
 	// case "lcnd-timestamp":
 	// 	result, err = lcndConfigTimestamp(params, r.list)
 	// case "msgnet-timestamp":
@@ -124,6 +115,9 @@ func (r *Router) handle(c *gin.Context) {
 		result, err = nodeVersion(r.list)
 	case "msgnet-version":
 		result, err = msgnetVersion(r.list)
+
+	case "node-cert":
+		result, err = nodeCert(req.Params, r.ca)
 	default:
 		err = errors.New("Invalid method")
 	}

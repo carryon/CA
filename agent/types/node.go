@@ -5,7 +5,6 @@ type NodeConfig struct {
 		MaxPeers       int           `json:"maxPeers"`
 		BootstrapNodes []interface{} `json:"bootstrapNodes"`
 		ListenAddr     string        `json:"listenAddr"`
-		Privatekey     string        `json:"privatekey"`
 
 		Msgnet struct {
 			RouteAddress []string `json:"routeAddress"`
@@ -22,7 +21,8 @@ type NodeConfig struct {
 	} `json:"jrpc"`
 
 	Blockchain struct {
-		ID         string `json:"id"`
+		ChainID    string `json:"chainId"`
+		NodeID     string `json:"nodeId"`
 		Datadir    string `json:"datadir"`
 		Cpuprofile string `json:"cpuprofile"`
 		ProfPort   string `json:"profPort"`
@@ -41,7 +41,6 @@ type NodeConfig struct {
 		} `json:"noops"`
 
 		Lbft struct {
-			ID                   string `json:"id"`
 			N                    int    `json:"N"`
 			Q                    int    `json:"Q"`
 			K                    int    `json:"K"`
@@ -73,7 +72,4 @@ type NodeConfig struct {
 		LuaVMExeFilePath           string `json:"luaVMExeFilePath"`
 		JsVMExeFilePath            string `json:"jsVMExeFilePath"`
 	} `json:"vm"`
-
-	NodeID     string `json:"node_id"`
-	UpdateTime int    `json:"update_time"`
 }

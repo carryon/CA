@@ -6,6 +6,10 @@ import (
 	"strings"
 )
 
+func RemoveFile(filePath string) error {
+	return removeDir(filePath)
+}
+
 func removeDir(walkDir string) error {
 	var files []string
 	err := filepath.Walk(walkDir, func(path string, info os.FileInfo, err error) error {
@@ -34,7 +38,7 @@ func OpenFile(path string) (*os.File, error) {
 	if err != nil {
 		return nil, err
 	}
-	return f, err
+	return f, nil
 }
 
 func PathExist(path string) bool {
@@ -43,13 +47,6 @@ func PathExist(path string) bool {
 		return false
 	}
 	return true
-}
-
-func RemoveFile(FilePath string) error {
-	if err := os.RemoveAll(FilePath); err != nil {
-		return err
-	}
-	return nil
 }
 
 // OpenDir opens or creates a dir

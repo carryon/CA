@@ -20,7 +20,6 @@ var (
 
 type Config struct {
 	ID           string
-	CaServer     string
 	DeployServer string
 	BaseDir      string
 	ExecDir      string
@@ -63,9 +62,7 @@ func (c *Config) readConfig() {
 	if id := viper.GetString("id"); id != "" {
 		c.ID = id
 	}
-	if ca := viper.GetString("server.ca"); ca != "" {
-		c.CaServer = ca
-	}
+
 	if deploy := viper.GetString("server.deploy"); deploy != "" {
 		c.DeployServer = deploy
 	}

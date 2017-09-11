@@ -2,7 +2,11 @@ package request
 
 import (
 	"bytes"
+	"crypto/rand"
+	"crypto/rsa"
+	"crypto/x509"
 	"encoding/json"
+	"encoding/pem"
 	"errors"
 	"fmt"
 	"io/ioutil"
@@ -41,26 +45,6 @@ func NewRequest() *Request {
 	return &Request{
 		client: client,
 	}
-}
-
-func (r *Request) getMsgnetVersion(id string) (string, error) {
-	req := &Req{
-		ID:     1,
-		Method: "msgnet-version",
-		Params: []string{id},
-	}
-
-	return r.getVersion(req, config.Cfg.DeployServer)
-}
-
-func (r *Request) getLcndVersion(id string) (string, error) {
-	req := &Req{
-		ID:     1,
-		Method: "lcnd-version",
-		Params: []string{id},
-	}
-
-	return r.getVersion(req, config.Cfg.DeployServer)
 }
 
 func (r *Request) GetLcndConfig(id string) ([]*node.NodeInfo, error) {
@@ -107,12 +91,13 @@ func (r *Request) GetLcndConfig(id string) ([]*node.NodeInfo, error) {
 			log.Error("node", err, v)
 			return nil, err
 		}
-		cert, err := r.getCrt(id, nodeConfig.NodeID)
+		cert, err := r.getCrt(nodeConfig.Blockchain.ChainID, nodeConfig.Blockchain.NodeID)
 		if err != nil {
-			log.Error("get crt err", err, *cert)
+			log.Error("get crt err", err)
 			return nil, err
 		}
-		node := node.NewNodeInfo(nodeConfig.NodeID, version, nodeConfig, cert)
+
+		node := node.NewNodeInfo(nodeConfig.Blockchain.NodeID, version, nodeConfig, cert)
 		nodes = append(nodes, node)
 	}
 
@@ -166,11 +151,22 @@ func (r *Request) GetMsgnetConfig(id string) ([]*msgnet.MsgnetInfo, error) {
 
 }
 
-func (r *Request) getCrt(agentID, nodeID string) (*types.NodeCert, error) {
+func (r *Request) getCrt(chainID, nodeID string) (*types.NodeCert, error) {
+	//generate key
+	rsaKey, err := rsa.GenerateKey(rand.Reader, 2048)
+	if err != nil {
+		return nil, fmt.Errorf("create key error: %s", err)
+	}
+
+	rsaPublicKeyBytes, err := genPublickeyBytes(rsaKey)
+	if err != nil {
+		return nil, fmt.Errorf("generate publick bytes error: %s", err)
+	}
+
 	req := &Req{
 		ID:     1,
 		Method: "node-cert",
-		Params: []string{agentID, nodeID},
+		Params: []string{chainID, nodeID, string(rsaPublicKeyBytes)},
 	}
 
 	request, err := json.Marshal(req)
@@ -178,22 +174,43 @@ func (r *Request) getCrt(agentID, nodeID string) (*types.NodeCert, error) {
 		return nil, err
 	}
 
-	data, err := r.request(config.Cfg.CaServer, request)
+	data, err := r.request(config.Cfg.DeployServer, request)
 	if err != nil {
 		return nil, err
 	}
 
-	nodeCert := new(types.NodeCert)
-	if err := json.Unmarshal(data, nodeCert); err != nil {
+	serverResponse := new(Resp)
+	if err := json.Unmarshal(data, &serverResponse); err != nil {
 		return nil, err
 	}
 
-	if nodeCert.Error != nil {
-		return nil, fmt.Errorf("get cert :%s", nodeCert.Error.(string))
+	if serverResponse.Error != nil {
+		return nil, fmt.Errorf("get cert :%s", serverResponse.Error.(string))
 	}
 
-	return nodeCert, nil
+	return &types.NodeCert{PrivateKey: rsaKey, Certificate: serverResponse.Result[0], RootCertificate: serverResponse.Result[1]}, nil
 }
+
+func (r *Request) getMsgnetVersion(id string) (string, error) {
+	req := &Req{
+		ID:     1,
+		Method: "msgnet-version",
+		Params: []string{id},
+	}
+
+	return r.getVersion(req, config.Cfg.DeployServer)
+}
+
+func (r *Request) getLcndVersion(id string) (string, error) {
+	req := &Req{
+		ID:     1,
+		Method: "lcnd-version",
+		Params: []string{id},
+	}
+
+	return r.getVersion(req, config.Cfg.DeployServer)
+}
+
 func (r *Request) getVersion(req *Req, url string) (string, error) {
 
 	request, err := json.Marshal(req)
@@ -235,4 +252,23 @@ func (r *Request) request(address string, request []byte) ([]byte, error) {
 		return nil, err
 	}
 	return body, nil
+}
+
+func genPublickeyBytes(privateKey *rsa.PrivateKey) ([]byte, error) {
+
+	rsaPublicKey, err := x509.MarshalPKIXPublicKey(&privateKey.PublicKey)
+	if err != nil {
+		return nil, err
+	}
+
+	block := &pem.Block{
+		Type:  "PUBLIC KEY",
+		Bytes: rsaPublicKey,
+	}
+
+	buffer := new(bytes.Buffer)
+
+	pem.Encode(buffer, block)
+
+	return buffer.Bytes(), nil
 }

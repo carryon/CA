@@ -38,7 +38,14 @@ func NewServer(configPath string) *Server {
 	//init db
 	db := db.NewDB(s.config.DBConfig)
 
-	s.router = NewRouter(NewList(db), config.Port)
+	//init ca
+	ca := NewCa(db, s.config.CaPath)
+
+	if err := ca.Init(); err != nil {
+		log.Error("ca init : ", err)
+	}
+
+	s.router = NewRouter(NewList(db), ca, s.config.Port)
 
 	s.msgNet = NewMsgnet(defaultAddr, s.config.RouterAddresses, s.handleMsgnetMessage, s.config.LogDir)
 

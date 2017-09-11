@@ -9,6 +9,12 @@
 			"revisionTime": "2017-08-15T20:20:55Z"
 		},
 		{
+			"checksumSHA1": "fQVtNwLrxkv38GW2ruvvP5r1Xr4=",
+			"path": "github.com/bocheninc/L0/components/crypto",
+			"revision": "6ae9d8e51ebdede00ec41a52ddf7f67fa2a14185",
+			"revisionTime": "2017-09-08T03:40:48Z"
+		},
+		{
 			"checksumSHA1": "YZ5X/42CtshnFkI6uXjll/XU364=",
 			"path": "github.com/bocheninc/msg-net/config",
 			"revision": "56dfcd4ca69bcaf2f04dd3d14c42386921d0dc55",

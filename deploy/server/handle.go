@@ -8,17 +8,17 @@ import (
 	yaml "gopkg.in/yaml.v2"
 )
 
-func msgnetsConfig(params interface{}, list *List) (interface{}, error) {
+func msgnetsConfig(params []string, list *List) (interface{}, error) {
 	//todo msgnet config
-	// aid := getID(params)
-	// _ = list.AgentList[aid]
 
 	return nil, nil
 }
 
-func nodesConfig(params interface{}, list *List) (interface{}, error) {
-	aid := getID(params)
+func nodesConfig(params []string, list *List) (interface{}, error) {
+	aid := params[0]
 	nodes, ok := list.NodeList[aid]
+
+	fmt.Println("agentID: ", aid)
 	if !ok {
 		return nil, fmt.Errorf("not found by agent id : %s", aid)
 	}
@@ -32,8 +32,8 @@ func nodesConfig(params interface{}, list *List) (interface{}, error) {
 
 		b := body.(map[interface{}]interface{})
 
-		b[interface{}("node_id")] = interface{}(v.NodeID)
-		b[interface{}("update_time")] = interface{}(v.Updated.Unix())
+		b[interface{}("blockchain")].(map[interface{}]interface{})[interface{}("chainId")] = interface{}(v.ChainID)
+		b[interface{}("blockchain")].(map[interface{}]interface{})[interface{}("nodeId")] = interface{}(v.NodeID)
 
 		body = convert(b)
 		r, err := json.Marshal(body)
@@ -46,8 +46,8 @@ func nodesConfig(params interface{}, list *List) (interface{}, error) {
 	return result, nil
 }
 
-func lcndConfigTimestamp(params interface{}, list *List) (interface{}, error) {
-	aid := getID(params)
+func lcndConfigTimestamp(params []string, list *List) (interface{}, error) {
+	aid := params[0]
 	nodes := list.NodeList[aid]
 	var result []interface{}
 	for _, v := range nodes {
@@ -61,25 +61,38 @@ func lcndConfigTimestamp(params interface{}, list *List) (interface{}, error) {
 	return result, nil
 }
 
-func msgnetConfigTimestamp(params interface{}, list *List) (interface{}, error) {
+func msgnetConfigTimestamp(params []string, list *List) (interface{}, error) {
 	//todo
 	return nil, nil
 }
 
 func nodeVersion(list *List) (interface{}, error) {
 	var result = make(map[string]string)
-	result["version"] = "0.88"
+	result["version"] = "v0.8.8"
 	return result, nil
+}
+
+func nodeCert(params []string, ca *Ca) (interface{}, error) {
+	chainID := params[0]
+	nodeID := params[1]
+	key := params[2]
+
+	certificate, err := ca.GetCert(chainID, nodeID, key)
+	if err != nil {
+		return nil, err
+	}
+
+	rootCertificate, err := ca.GetRootCertificate()
+	if err != nil {
+		return nil, err
+	}
+
+	return []string{string(certificate), string(rootCertificate)}, nil
 }
 
 func msgnetVersion(list *List) (interface{}, error) {
 	//todo
 	return nil, nil
-}
-
-func getID(params interface{}) string {
-	tem := params.([1]interface{})
-	return tem[0].(string)
 }
 
 func convert(i interface{}) interface{} {

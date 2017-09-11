@@ -1,9 +1,7 @@
 deploy/log
+deploy/cert
 deploy/deploy
 agent/blockchain
 agent/datadir
 agent/agent.log
 agent/agent
-CA-Server/CA-Server
-CA-Server/ca_server.log
-CA-Server/data

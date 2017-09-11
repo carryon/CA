@@ -11,10 +11,11 @@ import (
 
 const (
 	defaultLogLevel       = "debug"
-	defaultLogFilename    = "deplog.log"
+	defaultLogFilename    = "deploy.log"
 	defaultLogDirname     = "log"
 	defaultConfigFilename = "deploy.yaml"
 	defaultPort           = "8888"
+	defaultCertDirname    = "cert"
 )
 
 var (
@@ -24,6 +25,7 @@ var (
 		LogFile:  defaultLogFilename,
 		LogDir:   defaultLogDirname,
 		Port:     defaultPort,
+		CaPath:   defaultCertDirname,
 	}
 )
 
@@ -32,6 +34,7 @@ type Config struct {
 	LogFile         string
 	LogDir          string
 	Port            string
+	CaPath          string
 	RouterAddresses []string
 	DBConfig        *db.MysqldbConfig
 }
@@ -107,5 +110,11 @@ func (cfg *Config) readPort() {
 func (cfg *Config) readMsgnetAddresses() {
 	if routerAddresses := viper.GetStringSlice("msgnet.addresses"); routerAddresses != nil {
 		cfg.RouterAddresses = routerAddresses
+	}
+}
+
+func (cfg *Config) readCertPath() {
+	if path := viper.GetString("cert.datadir"); path != "" {
+		cfg.CaPath = path
 	}
 }

@@ -5,8 +5,8 @@ import (
 	"os"
 
 	"github.com/bocheninc/CA/agent/config"
+	"github.com/bocheninc/CA/agent/log"
 	s "github.com/bocheninc/CA/agent/server"
-	"github.com/bocheninc/L0/components/log"
 	"github.com/spf13/cobra"
 )
 

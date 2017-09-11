@@ -17,3 +17,7 @@ db:
 #msgnet
 msgnet:
   addresses: ["127.0.0.1:10001"]
+
+#cert ca
+cert:
+  datadir: "cert"
